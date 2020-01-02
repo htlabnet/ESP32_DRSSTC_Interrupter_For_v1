@@ -31,7 +31,7 @@
 //  IO16 - UART2 RXD (MIDI IN)
 //  IO17 - UART2 TXD (MIDI OUT)
 //  IO18 - VSPI CLK [SCK] (SD CLK)
-//  IO19 - VSPI IQ [MISO] (SD DAT0)
+//  IO19 - VSPI IQ [MISO] (SD DAT0) Need pull-up
 //  IO21 - PIEZO SPEAKER
 //  IO22 - UART0 MODE OUT (MIDI/UART)
 //  IO23 - VSPI ID [MOSI] (SD CMD)
@@ -49,8 +49,23 @@
 //    - MIDI Library 4.3
 //
 
+//
+// ########## MCP23S08 Pin Assignments ##########
+//  GP0 - NONE
+//  GP1 - NONE
+//  GP2 - LCD RS
+//  GP3 - LCD ENA
+//  GP4 - LCD DB4
+//  GP5 - LCD DB5
+//  GP6 - LCD DB6
+//  GP7 - LCD DB7
+
+
 
 void setup() {
+
+  pinMode(MISO, PULLUP);
+  dacWrite(25, 200);
 
 }
 
