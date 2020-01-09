@@ -20,11 +20,12 @@ void expInit(SPIClass &spi, uint8_t ss) {
 
 void expPinWrite(SPIClass &spi, uint8_t ss, uint8_t pin, bool state) {
   static uint8_t pinState = 0x00;
+  pinState = (pinState & ~(1 << pin)) | (state << pin);
   digitalWrite(ss, LOW);
   spi.beginTransaction(SPISettings(10000000, MSBFIRST, SPI_MODE0));
   spi.transfer(EXP_ADDR);
   spi.transfer(EXP_REG_GPIO);
-  spi.transfer((pinState & ~(1 << pin)) | (state << pin));
+  spi.transfer(pinState);
   spi.endTransaction();
   digitalWrite(ss, HIGH);
   return;
