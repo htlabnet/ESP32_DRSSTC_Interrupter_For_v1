@@ -98,21 +98,49 @@ void setup() {
   // IO Expander Initialize
   expInit(hSPI, PIN_EXP1_CS);
 
+
+  // LCD Custom Character
+  spiLcdBegin(hSPI, PIN_EXP1_CS, PIN_LCD_RS, PIN_LCD_ENA, PIN_LCD_DB4, PIN_LCD_DB5, PIN_LCD_DB6, PIN_LCD_DB7);
+  byte lcd_play[8] = {B01000,B01100,B01110,B01111,B01110,B01100,B01000};
+  byte lcd_stop[8] = {B00000,B11111,B11111,B11111,B11111,B11111,B00000};
+  byte lcd_down[8] = {B00000,B00000,B00000,B10001,B01010,B00100,B00000};
+  spiLcdCreateChar(0, lcd_stop);
+  spiLcdCreateChar(1, lcd_play);
+  spiLcdCreateChar(2, lcd_down);
+
+  // LCD Initialize (IO Expander 1)
+  spiLcdBegin(hSPI, PIN_EXP1_CS, PIN_LCD_RS, PIN_LCD_ENA, PIN_LCD_DB4, PIN_LCD_DB5, PIN_LCD_DB6, PIN_LCD_DB7);
+
+  spiLcdSetCursor(8,0);
+  spiLcdCustomChar(0);
+  spiLcdCustomChar(1);
+  spiLcdCustomChar(2);
+  delay(2000);
+
 }
 
 
 void loop() {
 
+  spiLcdClear();
+  spiLcdSetCursor(0,2);
+  
   for (uint8_t ch = 0 ; ch <8 ; ch++ ) {
     uint16_t adc = adcRead(hSPI, PIN_ADC1_CS, ch);
     Serial.println("CH" + String(ch) +": " + String(adc)) ;
   }
   Serial.println("----------------------------------------") ;
-  expPinWrite(hSPI, PIN_EXP1_CS, 0, HIGH);
+  //expPinWrite(hSPI, PIN_EXP1_CS, 0, HIGH);
   delay(500);
-  expPinWrite(hSPI, PIN_EXP1_CS, 0, LOW);
+  //expPinWrite(hSPI, PIN_EXP1_CS, 1, HIGH);
   delay(500);
-    
+  //expPinWrite(hSPI, PIN_EXP1_CS, 0, LOW);
+  delay(500);
+  //expPinWrite(hSPI, PIN_EXP1_CS, 1, LOW);
+  delay(500);
+
+  spiLcdPrint("TEST");
+  delay(2000);
 }
 
 

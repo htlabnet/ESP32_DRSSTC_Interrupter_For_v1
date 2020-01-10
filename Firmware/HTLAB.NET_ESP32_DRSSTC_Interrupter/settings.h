@@ -26,10 +26,5 @@
 #define PIN_LCD_DB6 6
 #define PIN_LCD_DB7 7
 
-// IO-Expander Register Map
-#define EXP_ADDR 0x40
-#define EXP_REG_DIR 0x00
-#define EXP_REG_GPIO 0x09
-
 
 #endif
