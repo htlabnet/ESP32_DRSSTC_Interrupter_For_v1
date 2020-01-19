@@ -15,7 +15,9 @@ void expInit(SPIClass &spi, uint8_t ss);
 void expPinWrite(SPIClass &spi, uint8_t ss, uint8_t pin, bool state);
 
 void spiLcdBegin(SPIClass &spi, uint8_t cs, uint8_t rs, uint8_t ena, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7);
-size_t spiLcdPrint(const char *buffer);
+size_t spiLcdPrintChar(const char *buffer);
+size_t spiLcdPrint(const String &s);
+size_t spiLcdPrint(const char str[]);
 void spiLcdCreateChar(uint8_t location, uint8_t charmap[]);
 void spiLcdCustomChar(uint8_t id);
 void spiLcdClear();

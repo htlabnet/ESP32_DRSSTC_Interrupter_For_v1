@@ -118,7 +118,7 @@ void spiLcdDisplay() {
 }
 
 
-size_t spiLcdPrint(const char *buffer) {
+size_t spiLcdPrintChar(const char *buffer) {
   size_t n = 0;
   size_t size = strlen(buffer);
   while (size--) {
@@ -126,6 +126,16 @@ size_t spiLcdPrint(const char *buffer) {
     else break;
   }
   return n;
+}
+
+
+size_t spiLcdPrint(const String &s) {
+  return spiLcdPrintChar(s.c_str());
+}
+
+
+size_t spiLcdPrint(const char str[]) {
+  return spiLcdPrintChar(str);
 }
 
 
