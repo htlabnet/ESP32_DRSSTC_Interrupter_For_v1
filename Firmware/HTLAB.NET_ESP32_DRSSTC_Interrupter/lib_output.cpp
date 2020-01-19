@@ -189,3 +189,79 @@ void spiLcdWrite4Bit(uint8_t value) {
   expPinWrite(_spiLcdSpi, _spiLcdExpCS, _spiLcdDB7, (value >> 3) & 0x01);
   spiLcdEnable();
 }
+
+
+void pulsePin(uint8_t ch, uint8_t pin) {
+  ledcAttachPin(pin, ch);
+}
+
+
+void IRAM_ATTR pulseOut(uint8_t ch, uint16_t hz, uint16_t us) {
+
+/*
+ * LEDC Chan to Group/Channel/Timer Mapping
+** ledc: 0  => Group: 0, Channel: 0, Timer: 0
+** ledc: 1  => Group: 0, Channel: 1, Timer: 0
+** ledc: 2  => Group: 0, Channel: 2, Timer: 1
+** ledc: 3  => Group: 0, Channel: 3, Timer: 1
+** ledc: 4  => Group: 0, Channel: 4, Timer: 2
+** ledc: 5  => Group: 0, Channel: 5, Timer: 2
+** ledc: 6  => Group: 0, Channel: 6, Timer: 3
+** ledc: 7  => Group: 0, Channel: 7, Timer: 3
+** ledc: 8  => Group: 1, Channel: 0, Timer: 0
+** ledc: 9  => Group: 1, Channel: 1, Timer: 0
+** ledc: 10 => Group: 1, Channel: 2, Timer: 1
+** ledc: 11 => Group: 1, Channel: 3, Timer: 1
+** ledc: 12 => Group: 1, Channel: 4, Timer: 2
+** ledc: 13 => Group: 1, Channel: 5, Timer: 2
+** ledc: 14 => Group: 1, Channel: 6, Timer: 3
+** ledc: 15 => Group: 1, Channel: 7, Timer: 3
+*/
+
+  static uint16_t last_hz[16];
+  static uint16_t last_us[16];
+  static uint8_t last_bit[16];
+  uint8_t bit_num;
+  double base_num;
+
+  if (hz <= 4) {
+    ledcWrite(ch, 0);
+    last_hz[ch] = hz;
+    return;
+  } else if (hz <= 305) {
+    bit_num = 18;
+    base_num = 3.75;
+  } else if (hz <= 610) {
+    bit_num = 17;
+    base_num = 7.5;
+  } else if (hz <= 1220) {
+    bit_num = 16;
+    base_num = 15.0;
+  } else if (hz <= 2441) {
+    bit_num = 15;
+    base_num = 30.0;
+  } else if (hz <= 4882) {
+    bit_num = 14;
+    base_num = 60.0;
+  }
+  uint32_t period = ((double)hz * (double)us) / base_num;
+
+  if ((500000 / hz) <= us) {
+    // Max 50% Duty
+    return;
+  }
+
+  if (last_hz[ch] < hz) {
+    ledcSetup(ch, hz, bit_num);
+    ledcWrite(ch, period);
+  } else if (last_hz[ch] > hz || last_bit[ch] > bit_num) {
+    ledcWrite(ch, period);
+    ledcSetup(ch, hz, bit_num);
+    ledcWrite(ch, period);
+  } else if (last_us[ch] != us && last_hz[ch] == hz && last_bit[ch] == bit_num) {
+    ledcWrite(ch, period);
+  }
+  last_hz[ch] = hz;
+  last_us[ch] = us;
+  last_bit[ch] = bit_num;
+}

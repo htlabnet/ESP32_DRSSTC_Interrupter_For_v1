@@ -31,5 +31,7 @@ void spiLcdSend(uint8_t value, uint8_t mode);
 void spiLcdEnable(void);
 void spiLcdWrite4Bit(uint8_t value);
 
+void pulsePin(uint8_t ch, uint8_t pin);
+void IRAM_ATTR pulseOut(uint8_t ch, uint16_t hz, uint16_t us);
 
 #endif
